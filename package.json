@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "LifeOS — never forget what matters. Capture anything important, confirm what it means, get reminded, get it done.",
+  "description": "LifeOS \u2014 never forget what matters. Capture anything important, confirm what it means, get reminded, get it done.",
   "license": "AGPL-3.0-only",
   "packageManager": "pnpm@11.17.0",
   "engines": {
@@ -22,7 +22,8 @@
     "seed:demo": "node scripts/seed-demo.ts",
     "setup:ocr": "node scripts/setup-ocr.ts",
     "bench": "node scripts/bench.ts",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build",
+    "db:reset": "node scripts/migrate.ts --reset"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

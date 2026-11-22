@@ -1,0 +1,7 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    { "name": "lifeos-dev", "runtimeExecutable": "pnpm", "runtimeArgs": ["--filter", "@lifeos/web", "dev"], "port": 3200 },
+    { "name": "lifeos-prod", "runtimeExecutable": "pnpm", "runtimeArgs": ["--filter", "@lifeos/web", "start"], "port": 3200 }
+  ]
+}

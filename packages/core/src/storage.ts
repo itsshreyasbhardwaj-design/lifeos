@@ -26,10 +26,10 @@ export function storageKey(workspaceId: string, fileId: string): string {
 }
 
 export function localStore(root = process.env.LIFEOS_FILES_DIR ?? join(repoRoot(), 'data', 'files')): BlobStore {
-  const base = resolve(root);
+  const base = resolve(/* turbopackIgnore: true */ root);
   const pathFor = (key: string) => {
     if (!KEY_RE.test(key)) throw new Error('Invalid storage key');
-    const p = resolve(base, key);
+    const p = resolve(/* turbopackIgnore: true */ base, key);
     if (!p.startsWith(base + '/')) throw new Error('Path escapes storage root');
     return p;
   };
