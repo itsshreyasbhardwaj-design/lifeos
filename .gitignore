@@ -16,3 +16,4 @@ test-results/
 playwright-report/
 .DS_Store
 apps/extension/dist/
+.claude/
