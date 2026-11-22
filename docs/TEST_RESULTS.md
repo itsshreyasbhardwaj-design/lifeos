@@ -15,6 +15,7 @@ Run on 2026-11-22, Apple M2 / macOS / Node 24.16.0. Re-run with `pnpm verify` an
 | Typecheck (root + web) | ✅ 0 errors |
 | Lint (oxlint) | ✅ 0 errors, 14 style warnings |
 | Dependency audit (`pnpm audit`) | ✅ No known vulnerabilities |
+| GitHub Actions CI (first run, commit `91daa53`) | ✅ verify (Node 22) · verify (Node 24) · e2e — all green on ubuntu-latest |
 
 ## End-to-end detail
 

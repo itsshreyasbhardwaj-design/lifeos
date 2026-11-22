@@ -29,4 +29,6 @@ Things a person has to do — they need accounts, money, legal judgement, device
 - [ ] Validate pricing hypotheses (₹149 / ₹299) with real users before charging.
 
 ## Repository
-- [ ] Create the GitHub repository and push (not done without your go-ahead), then confirm CI runs green.
+- [x] Create the GitHub repository and push — public at https://github.com/itsshreyasbhardwaj-design/lifeos (2026-11-22). First CI run green: verify on Node 22 and 24, then E2E.
+- [ ] Turn on GitHub private vulnerability reporting (Settings → Security), which `SECURITY.md` points reporters to.
+- [ ] Bump the GitHub Actions in `ci.yml` when Node 24 versions are released (runners currently warn that `checkout`, `setup-node` and `pnpm/action-setup` v4 target the deprecated Node 20).
