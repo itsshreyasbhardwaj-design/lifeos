@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "description": "Durable background worker: reminder delivery, extraction jobs, automation evaluation.",
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "dependencies": {
     "@lifeos/core": "workspace:*"
   }

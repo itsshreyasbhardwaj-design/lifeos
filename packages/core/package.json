@@ -8,7 +8,7 @@
     ".": "./src/index.ts",
     "./*": "./src/*.ts"
   },
-  "license": "AGPL-3.0-only",
+  "license": "MIT",
   "dependencies": {
     "@electric-sql/pglite": "^0.5.8",
     "@lifeos/extract": "workspace:*",

@@ -59,7 +59,16 @@ export async function runJobs(db: Db, opts: { workerId?: string; limit?: number 
     const handler = handlers.get(job.kind);
     try {
       if (!handler) throw new Error(`No handler for job kind ${job.kind}`);
-      await handler(db, job.payload);
+      // A job that never settles must not hold the loop: fail it after the timeout
+      // (it is retried with backoff, then marked dead).
+      const limit = Number(process.env.LIFEOS_JOB_TIMEOUT_MS ?? 180_000);
+      let timer: NodeJS.Timeout | undefined;
+      await Promise.race([
+        handler(db, job.payload),
+        new Promise((_, reject) => {
+          timer = setTimeout(() => reject(new Error(`job exceeded ${Math.round(limit / 1000)} s`)), limit);
+        }),
+      ]).finally(() => clearTimeout(timer));
       await db.query(`UPDATE background_jobs SET status = 'done', last_error = NULL, updated_at = now() WHERE id = $1`, [job.id]);
     } catch (err) {
       failed++;

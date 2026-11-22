@@ -58,7 +58,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
         <div className="space-y-5">
           {open && (
             <Section title="Complete">
-              <ApiForm path={`/tasks/${id}/status`} transform={(b) => ({ ...b, status: 'completed' })} success="Marked complete." className="space-y-3">
+              <ApiForm path={`/tasks/${id}/status`} extra={{ status: 'completed' }} success="Marked complete." className="space-y-3">
                 <textarea name="note" className="field min-h-16" placeholder="Completion note (optional) — e.g. “Submitted online, ref APP-2291”" aria-label="Completion note" />
                 <button className="btn btn-primary">Mark complete</button>
               </ApiForm>
@@ -66,7 +66,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
           )}
           {!limited && (
             <Section title="Details">
-              <ApiForm path={`/tasks/${id}`} method="PATCH" resetOnSuccess={false} success="Saved." className="grid gap-3 sm:grid-cols-2" transform={(b) => ({ ...b, expectedVersion: t.version, reminderOffsets: b.remind ? [0] : [], remind: undefined })}>
+              <ApiForm path={`/tasks/${id}`} method="PATCH" resetOnSuccess={false} success="Saved." className="grid gap-3 sm:grid-cols-2" transform="taskDetails" extra={{ expectedVersion: t.version }}>
                 <div className="sm:col-span-2"><label className="label" htmlFor="title">Title</label><input id="title" name="title" defaultValue={t.title} className="field" required /></div>
                 <div><label className="label" htmlFor="due">Due date</label><input id="due" name="dueDate" type="date" defaultValue={t.due_date ?? ''} className="field" /></div>
                 <div><label className="label" htmlFor="time">Time (optional)</label><input id="time" name="dueTime" type="time" defaultValue={t.due_time ?? ''} className="field" /></div>
@@ -87,7 +87,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
           {!limited && (
             <Section title={`Subtasks${subs.length ? ` (${subs.filter((x) => x.status === 'completed').length}/${subs.length})` : ''}`}>
               {subs.length > 0 && <TaskList tasks={subs} today={today} />}
-              <ApiForm path="/tasks" className="mt-2 flex gap-2" transform={(b) => ({ ...b, parentId: id, workspaceId: t.workspace_id })}><input name="title" required className="field" placeholder="Add a subtask" aria-label="Subtask" /><button className="btn">Add</button></ApiForm>
+              <ApiForm path="/tasks" className="mt-2 flex gap-2" extra={{ parentId: id, workspaceId: t.workspace_id }}><input name="title" required className="field" placeholder="Add a subtask" aria-label="Subtask" /><button className="btn">Add</button></ApiForm>
             </Section>
           )}
           {!limited && (
@@ -100,7 +100,7 @@ export default async function TaskPage({ params }: { params: Promise<{ id: strin
           {notes.length > 0 || t.workspace_id !== s.spaces.find((x) => x.kind === 'personal')?.workspaceId ? (
             <Section title="Comments">
               <ul className="mb-3 space-y-2">{notes.map((c) => <li key={c.id} className="text-sm"><span className="font-semibold">{c.author ?? 'Someone'}</span> <span className="text-xs muted">{fmtDateTime(c.created_at, s.user.timezone)}</span><p>{c.body}</p></li>)}</ul>
-              <ApiForm path="/comments" className="flex gap-2" transform={(b) => ({ ...b, entityType: 'task', entityId: id })}><input name="body" required className="field" placeholder="Write a comment" aria-label="Comment" /><button className="btn">Post</button></ApiForm>
+              <ApiForm path="/comments" className="flex gap-2" extra={{ entityType: 'task', entityId: id }}><input name="body" required className="field" placeholder="Write a comment" aria-label="Comment" /><button className="btn">Post</button></ApiForm>
             </Section>
           ) : null}
         </div>

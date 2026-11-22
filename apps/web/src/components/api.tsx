@@ -2,6 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { createContext, useCallback, useContext, useState, type FormEvent, type ReactNode } from 'react';
+import { TRANSFORMS, type TransformName } from './transforms';
 
 export class ApiError extends Error {
   code: string;
@@ -110,17 +111,22 @@ export function formToJson(form: HTMLFormElement): Record<string, unknown> {
 }
 
 export function ApiForm({
-  path, method = 'POST', children, className, onDone, redirectTo, success, multipart, transform, resetOnSuccess = true,
+  path, method = 'POST', children, className, onDone, redirectTo, success, multipart, transform, extra, resetOnSuccess = true,
 }: {
   path: string;
   method?: string;
   children: ReactNode;
   className?: string;
+  /** Client components only (functions cannot cross the server/client boundary). */
   onDone?: (data: unknown) => void;
-  redirectTo?: string | ((data: unknown) => string);
+  /** A path; ":id" is replaced with the created record's id. */
+  redirectTo?: string;
   success?: string;
   multipart?: boolean;
-  transform?: (body: Record<string, unknown>) => Record<string, unknown>;
+  /** A named transform (usable from server components) or, from client components, a function. */
+  transform?: TransformName | ((body: Record<string, unknown>) => Record<string, unknown>);
+  /** Fixed values merged into the JSON body (or added to multipart). */
+  extra?: Record<string, unknown>;
   resetOnSuccess?: boolean;
 }) {
   const router = useRouter();
@@ -133,11 +139,20 @@ export function ApiForm({
     setBusy(true);
     setError(null);
     try {
-      const data = multipart ? await api(path, { method, form: new FormData(form) }) : await api(path, { method, body: transform ? transform(formToJson(form)) : formToJson(form) });
+      let data: unknown;
+      if (multipart) {
+        const fd = new FormData(form);
+        for (const [k, v] of Object.entries(extra ?? {})) fd.set(k, String(v));
+        data = await api(path, { method, form: fd });
+      } else {
+        const t = typeof transform === 'string' ? TRANSFORMS[transform] : transform;
+        const raw = formToJson(form);
+        data = await api(path, { method, body: { ...(t ? t(raw) : raw), ...(extra ?? {}) } });
+      }
       if (success) toast(success);
       if (resetOnSuccess) form.reset();
       onDone?.(data);
-      if (redirectTo) router.push(typeof redirectTo === 'function' ? redirectTo(data) : redirectTo);
+      if (redirectTo) router.push(redirectTo.replace(':id', String((data as { id?: string } | null)?.id ?? '')));
       else router.refresh();
     } catch (err) {
       setError((err as Error).message);

@@ -22,7 +22,7 @@ export function Demo() {
     <div className="card overflow-hidden">
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--line)] bg-[var(--surface-2)] px-4 py-2 text-xs">
         <span className="font-semibold">Interactive demo · fictional sample data · runs in your browser · nothing is saved</span>
-        <span className="flex gap-1.5">{SAMPLES.map((s) => <button key={s.label} className={`btn btn-sm ${text === s.text ? 'btn-primary' : ''}`} onClick={() => { setText(s.text); setState({}); }}>{s.label}</button>)}</span>
+        <span className="flex flex-wrap gap-1.5">{SAMPLES.map((s) => <button key={s.label} className={`btn btn-sm ${text === s.text ? 'btn-primary' : ''}`} onClick={() => { setText(s.text); setState({}); }}>{s.label}</button>)}</span>
       </div>
       <div className="grid gap-0 md:grid-cols-2">
         <div className="border-b border-[var(--line)] p-4 md:border-b-0 md:border-r">

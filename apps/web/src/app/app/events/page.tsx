@@ -25,7 +25,7 @@ export default async function EventsPage() {
           ))}
         </div>
         <Section title="Plan something">
-          <ApiForm path="/events" redirectTo={(d) => `/app/events/${(d as { id: string }).id}`} className="space-y-3">
+          <ApiForm path="/events" redirectTo="/app/events/:id" className="space-y-3">
             <div><label className="label" htmlFor="et">Template</label><select id="et" name="templateKey" className="field">{EVENT_TEMPLATES.map((t) => <option key={t.key} value={t.key}>{t.name}</option>)}</select></div>
             <div><label className="label" htmlFor="en">Title</label><input id="en" name="title" required className="field" placeholder="Goa trip, Moving to Pune…" /></div>
             <div className="grid grid-cols-2 gap-2"><div><label className="label" htmlFor="es">From</label><input id="es" name="startsOn" type="date" className="field" /></div><div><label className="label" htmlFor="ee">To</label><input id="ee" name="endsOn" type="date" className="field" /></div></div>

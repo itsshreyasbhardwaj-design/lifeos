@@ -56,14 +56,22 @@ export async function extractText(data: Buffer, mimeType: string): Promise<TextR
       }
       const name = 'tesseract.js';
       const { createWorker } = (await import(/* webpackIgnore: true */ /* turbopackIgnore: true */ name)) as typeof import('tesseract.js');
-      const worker = await createWorker(langs.join('+'), 1, { langPath: ocrModelDir(), cacheMethod: 'none', gzip: true, logger: () => {} });
+      // A stuck OCR worker must never stall the job queue: give up after the timeout.
+      const timeoutMs = Number(process.env.LIFEOS_OCR_TIMEOUT_MS ?? 60_000);
+      let timer: NodeJS.Timeout | undefined;
+      const timeout = new Promise<never>((_, reject) => {
+        timer = setTimeout(() => reject(new Error(`reading the image took longer than ${Math.round(timeoutMs / 1000)} s`)), timeoutMs);
+      });
+      let worker: Awaited<ReturnType<typeof createWorker>> | undefined;
       try {
-        const { data: out } = await worker.recognize(data);
+        worker = await Promise.race([createWorker(langs.join('+'), 1, { langPath: ocrModelDir(), cacheMethod: 'none', gzip: true, logger: () => {} }), timeout]);
+        const { data: out } = await Promise.race([worker.recognize(data), timeout]);
         const clean = normaliseText(out.text ?? '');
         if (clean.length < 4) return done({ engine: 'tesseract', status: 'no_text', text: '', note: 'No readable text was found in this image.' });
         return done({ engine: 'tesseract', status: 'extracted', text: clean, note: 'Text was read from an image, so it may contain mistakes. Check every field.' });
       } finally {
-        await worker.terminate();
+        clearTimeout(timer);
+        await worker?.terminate().catch(() => undefined);
       }
     }
     if (mimeType.startsWith('audio/')) {

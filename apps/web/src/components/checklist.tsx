@@ -18,8 +18,9 @@ export function Checklist({ ownerType, ownerId, items, canEdit = true, groupHint
   const router = useRouter();
   const toast = useToast();
   const [label, setLabel] = useState('');
+  const [optimistic, setOptimistic] = useState<Record<string, boolean>>({});
   const groups = [...new Set(items.map((i) => i.group_name))];
-  const done = items.filter((i) => i.done).length;
+  const done = items.filter((i) => optimistic[i.id] ?? i.done).length;
   return (
     <div>
       {items.length > 0 && (
@@ -36,7 +37,12 @@ export function Checklist({ ownerType, ownerId, items, canEdit = true, groupHint
           <ul className="space-y-1">
             {items.filter((i) => i.group_name === g).map((i) => (
               <li key={i.id} className="group flex items-center gap-2 text-sm">
-                <input type="checkbox" id={`chk-${i.id}`} checked={i.done} disabled={!canEdit} onChange={async (e) => { try { await api(`/checklists/${i.id}`, { method: 'PATCH', body: { done: e.target.checked } }); router.refresh(); } catch (err) { toast((err as Error).message, 'error'); } }} />
+                <input type="checkbox" id={`chk-${i.id}`} checked={optimistic[i.id] ?? i.done} disabled={!canEdit} onChange={async (e) => {
+                  const done = e.target.checked;
+                  setOptimistic((o) => ({ ...o, [i.id]: done }));
+                  try { await api(`/checklists/${i.id}`, { method: 'PATCH', body: { done } }); router.refresh(); }
+                  catch (err) { setOptimistic((o) => ({ ...o, [i.id]: !done })); toast((err as Error).message, 'error'); }
+                }} />
                 <label htmlFor={`chk-${i.id}`} className={`flex-1 ${i.done ? 'line-through muted' : ''}`}>{i.label}{i.kind === 'document' && <span className="chip ml-2">document</span>}</label>
                 {canEdit && <button className="btn btn-ghost btn-sm opacity-0 group-hover:opacity-100 focus:opacity-100" aria-label={`Remove ${i.label}`} onClick={async () => { await api(`/checklists/${i.id}`, { method: 'DELETE' }); router.refresh(); }}><X size={13} /></button>}
               </li>

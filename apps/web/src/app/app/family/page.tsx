@@ -41,7 +41,7 @@ export default async function FamilyPage({ searchParams }: { searchParams: Promi
       <div className="grid gap-5 lg:grid-cols-2">
         {team.role !== 'limited' && (
           <Section title="Shared tasks" action={<Link href={`/app/tasks?view=all`} className="text-sm text-[var(--color-blue)]">All tasks</Link>}>
-            <ApiForm path="/tasks" className="mb-3 grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]" transform={(b) => ({ ...b, workspaceId: fam.workspaceId, kind: 'family_task', reminderOffsets: b.dueDate ? [0] : [] })}>
+            <ApiForm path="/tasks" className="mb-3 grid gap-2 sm:grid-cols-[1fr_auto_auto_auto]" transform="remindIfDue" extra={{ workspaceId: fam.workspaceId, kind: 'family_task' }}>
               <input name="title" required className="field" placeholder="Add a household task" aria-label="Task" />
               <select name="assigneeId" className="field" aria-label="Assign to"><option value="">Unassigned</option>{team.people.map((p) => <option key={p.user_id} value={p.user_id}>{p.display_name}</option>)}</select>
               <input name="dueDate" type="date" className="field" aria-label="Due" />
@@ -53,7 +53,7 @@ export default async function FamilyPage({ searchParams }: { searchParams: Promi
         <Section title="Shopping">
           {lists.length === 0 && <p className="mb-2 text-sm muted">No lists yet.</p>}
           {lists.map((l) => <ShoppingList key={l.id} list={l} />)}
-          {team.role !== 'limited' && <ApiForm path="/shopping" className="mt-3 flex gap-2" transform={(b) => ({ ...b, workspaceId: fam.workspaceId })}><input name="name" required className="field" placeholder="New list (e.g. Groceries)" aria-label="List name" /><button className="btn">Create</button></ApiForm>}
+          {team.role !== 'limited' && <ApiForm path="/shopping" className="mt-3 flex gap-2" extra={{ workspaceId: fam.workspaceId }}><input name="name" required className="field" placeholder="New list (e.g. Groceries)" aria-label="List name" /><button className="btn">Create</button></ApiForm>}
         </Section>
         <Section title="People">
           <ul className="space-y-2 text-sm">{team.people.map((p) => (

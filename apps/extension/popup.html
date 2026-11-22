@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>LifeOS Capture</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header><strong>LifeOS</strong><span id="status" role="status"></span></header>
+  <section id="setup" hidden>
+    <p>Connect to your LifeOS. Create a token in LifeOS → Settings → Browser extension.</p>
+    <label>Server address <input id="server" type="url" placeholder="https://your-lifeos.example" /></label>
+    <label>Token <input id="token" type="password" placeholder="lfo_…" /></label>
+    <button id="connect">Connect</button>
+  </section>
+  <section id="main" hidden>
+    <button id="save-page">Save this page</button>
+    <button id="save-selection">Save selected text</button>
+    <label>Note or task <textarea id="note" rows="3" placeholder="e.g. Renew passport by 15 Dec"></textarea></label>
+    <div class="row"><button id="save-note">Save as note</button><button id="save-task">Add as task</button></div>
+    <p class="hint">Nothing on a page is read until you click. Captures land in your Inbox for review.</p>
+    <button id="disconnect" class="link">Disconnect</button>
+  </section>
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

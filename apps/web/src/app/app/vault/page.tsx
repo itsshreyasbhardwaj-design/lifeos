@@ -44,7 +44,7 @@ export default async function VaultPage({ searchParams }: { searchParams: Promis
           )}
         </div>
         <Section title="Upload">
-          <ApiForm path="/documents" multipart redirectTo={(d) => `/app/vault/${(d as { id: string }).id}`} className="space-y-3">
+          <ApiForm path="/documents" multipart redirectTo="/app/vault/:id" className="space-y-3">
             <input type="file" name="file" required className="text-sm" aria-label="File" accept="image/*,application/pdf,text/plain" />
             <div><label className="label" htmlFor="dt">Title</label><input id="dt" name="title" className="field" placeholder="Defaults to the file name" /></div>
             <div><label className="label" htmlFor="dc">Category</label><select id="dc" name="category" className="field">{DOCUMENT_CATEGORIES.map((c) => <option key={c} value={c}>{humanize(c)}</option>)}</select></div>

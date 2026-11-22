@@ -32,7 +32,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         <div className="mt-5">
           <div className="mb-2 flex items-center justify-between">
             <p className="text-sm muted">{hits.length} result{hits.length === 1 ? '' : 's'} for “{q}”</p>
-            <ApiForm path="/saved-searches" transform={() => ({ name: q, query: q })}><button className="btn btn-sm">Save search</button></ApiForm>
+            <ApiForm path="/saved-searches" extra={{ name: q, query: q }}><button className="btn btn-sm">Save search</button></ApiForm>
           </div>
           {hits.length === 0 ? <Empty title="No matches">Try fewer or different words. Search matches word beginnings, so “inv” finds “invoice”.</Empty> : (
             <ul className="card divide-y divide-[var(--line)]">

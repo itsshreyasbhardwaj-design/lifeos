@@ -1,0 +1,10 @@
+{
+  "name": "@lifeos/extension",
+  "version": "0.1.0",
+  "private": true,
+  "description": "LifeOS Capture — Manifest V3 browser extension. Load apps/extension as an unpacked extension.",
+  "license": "MIT",
+  "scripts": {
+    "zip": "cd . && zip -r ../../dist-extension.zip manifest.json *.js *.html *.css *.png"
+  }
+}

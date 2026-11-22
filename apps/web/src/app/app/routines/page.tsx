@@ -44,7 +44,7 @@ export default async function RoutinesPage() {
           ))}
         </div>
         <Section title="New routine">
-          <ApiForm path="/routines" className="space-y-3" transform={(b) => ({ title: b.title, timeOfDay: b.timeOfDay, reminderEnabled: Boolean(b.reminderEnabled), recurrence: b.freq === 'weekdays' ? { freq: 'weekly', interval: 1, byWeekday: [0, 1, 2, 3, 4] } : b.freq === 'weekly' ? { freq: 'weekly', interval: 1, byWeekday: (b.days as string[] | undefined ?? []).map(Number) } : { freq: b.freq, interval: 1 } })}>
+          <ApiForm path="/routines" className="space-y-3" transform="routine">
             <div><label className="label" htmlFor="rt">What</label><input id="rt" name="title" required className="field" /></div>
             <div><label className="label" htmlFor="rf">How often</label><select id="rf" name="freq" className="field"><option value="daily">Every day</option><option value="weekdays">Weekdays</option><option value="weekly">Certain days</option><option value="monthly">Monthly</option></select></div>
             <fieldset><legend className="label">Days (for “certain days”)</legend><div className="flex flex-wrap gap-2 text-xs">{['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((d, i) => <label key={d} className="flex items-center gap-1"><input type="checkbox" name="days" value={String(i)} />{d}</label>)}</div></fieldset>

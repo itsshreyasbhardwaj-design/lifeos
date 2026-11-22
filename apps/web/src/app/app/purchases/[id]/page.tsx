@@ -44,7 +44,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
       <div className="grid gap-5 lg:grid-cols-2">
         <Section title="Warranty">
           {warranties.length === 0 ? (
-            <ApiForm path={`/purchases/${id}/warranty`} className="space-y-3" transform={(b) => ({ ...b, remindDaysBefore: [30, 7] })}>
+            <ApiForm path={`/purchases/${id}/warranty`} className="space-y-3" extra={{ remindDaysBefore: [30, 7] }}>
               <p className="text-sm muted">Enter the warranty from the card or invoice. LifeOS does not assume manufacturer terms.</p>
               <div className="grid grid-cols-2 gap-2">
                 <div><label className="label" htmlFor="ws">Starts</label><input id="ws" name="startsOn" type="date" required defaultValue={p.purchase_date ?? ''} className="field" /></div>
@@ -71,7 +71,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
         </Section>
         <Section title="Return & refund">
           {returns.length === 0 ? (
-            <ApiForm path={`/purchases/${id}/return`} className="space-y-3" transform={(b) => ({ ...b, remindDaysBefore: [2, 0] })}>
+            <ApiForm path={`/purchases/${id}/return`} className="space-y-3" extra={{ remindDaysBefore: [2, 0] }}>
               <p className="text-sm muted">Add the last day you can return it, as stated by the seller.</p>
               <div><label className="label" htmlFor="rd">Return by</label><input id="rd" name="deadline" type="date" required className="field" /></div>
               <div><label className="label" htmlFor="rn">Conditions (optional)</label><input id="rn" name="eligibilityNotes" className="field" placeholder="Unused, original packaging…" /></div>
@@ -88,7 +88,7 @@ export default async function PurchasePage({ params }: { params: Promise<{ id: s
                 {r.status !== 'closed' && <ApiButton path={`/returns/${r.id}/status`} body={{ status: 'closed' }}>Keep it / close</ApiButton>}
               </div>
               {['returned', 'return_requested'].includes(r.status) && (
-                <ApiForm path={`/returns/${r.id}/status`} transform={(b) => ({ ...b, status: 'refund_pending' })} className="flex flex-wrap items-end gap-2">
+                <ApiForm path={`/returns/${r.id}/status`} extra={{ status: 'refund_pending' }} className="flex flex-wrap items-end gap-2">
                   <div><label className="label" htmlFor="rf">Check refund on</label><input id="rf" name="refundFollowUpOn" type="date" required className="field" /></div>
                   <button className="btn btn-sm">Waiting for refund</button>
                 </ApiForm>

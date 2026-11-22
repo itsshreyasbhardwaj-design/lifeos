@@ -50,7 +50,7 @@ export default async function WorkflowPage({ params }: { params: Promise<{ id: s
           </Section>
           <Section title="Evidence & documents">
             <ul className="mb-3 space-y-1.5 text-sm">{links.map((l) => <li key={l.linkId}><span className="chip mr-1.5">{humanize(l.relation)}</span>{l.title ?? humanize(l.type)}</li>)}</ul>
-            <ApiForm path="/links" success="Attached." className="flex gap-2" transform={(b) => ({ fromType: 'document', fromId: b.documentId, toType: 'admin_workflow', toId: id, relation: 'evidence_for', workspaceId: w.workspace_id })}>
+            <ApiForm path="/links" success="Attached." className="flex gap-2" transform="documentLink" extra={{ toType: 'admin_workflow', toId: id, relation: 'evidence_for', workspaceId: w.workspace_id }}>
               <select name="documentId" required className="field" aria-label="Document" defaultValue=""><option value="" disabled>Attach a document…</option>{docs.filter((d) => d.workspace_id === w.workspace_id).map((d) => <option key={d.id} value={d.id}>{d.title}</option>)}</select>
               <button className="btn">Attach</button>
             </ApiForm>

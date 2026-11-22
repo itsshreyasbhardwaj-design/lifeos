@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "LifeOS \u2014 never forget what matters. Capture anything important, confirm what it means, get reminded, get it done.",
-  "license": "AGPL-3.0-only",
+  "description": "LifeOS — never forget what matters. Capture anything important, confirm what it means, get reminded, get it done.",
+  "license": "MIT",
   "packageManager": "pnpm@11.17.0",
   "engines": {
     "node": ">=22.18.0"
@@ -26,6 +26,7 @@
     "db:reset": "node scripts/migrate.ts --reset"
   },
   "devDependencies": {
+    "@playwright/test": "1.64.1",
     "@types/node": "^24.10.1",
     "oxlint": "^1.89.0",
     "typescript": "^5.9.3"

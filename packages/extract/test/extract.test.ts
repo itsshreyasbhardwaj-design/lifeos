@@ -199,6 +199,11 @@ test('quick add', () => {
   const r = parseQuickAdd('Water the plants every Monday', { today });
   assert.deepEqual(r.recurrence, { freq: 'weekly', interval: 1, byWeekday: [0] });
   assert.equal(r.title, 'Water the plants');
+  const rent = parseQuickAdd('Pay rent on the 5th of every month', { today });
+  assert.equal(rent.title, 'Pay rent');
+  assert.equal(rent.dueDate, '2026-12-05', 'first occurrence computed from the rule');
+  assert.deepEqual(rent.recurrence, { freq: 'monthly', interval: 1, byMonthDay: 5 });
+  assert.equal(parseQuickAdd('Water the plants every Monday', { today }).dueDate, '2026-11-23');
   const bare = parseQuickAdd('call mom at 5pm', { today });
   assert.equal(bare.dueDate, null);
   assert.ok(bare.uncertain.some((u) => u.reason === 'date_missing'));

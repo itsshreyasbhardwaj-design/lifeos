@@ -221,7 +221,7 @@ function ShellInner({ children, userName, plan, spaces, activeId, tr }: ShellPro
         </div>
       )}
 
-      <main id="main" className="mx-auto max-w-6xl px-4 pb-28 pt-6 md:px-8 md:pb-12">{children}</main>
+      <main id="main" className="mx-auto min-w-0 max-w-6xl overflow-x-clip px-4 pb-28 pt-6 md:px-8 md:pb-12">{children}</main>
 
       <nav aria-label="Quick" className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-[var(--line)] bg-[var(--surface)] pb-[env(safe-area-inset-bottom)] md:hidden">
         {[{ href: '/app', icon: Home, key: 'nav.today' as const }, { href: '/app/inbox', icon: Inbox, key: 'nav.inbox' as const }].map((i) => (

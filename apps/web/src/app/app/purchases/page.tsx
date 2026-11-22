@@ -41,7 +41,7 @@ export default async function PurchasesPage({ searchParams }: { searchParams: Pr
           </div>
           {allowed && (
             <Section title="Add a purchase">
-              <ApiForm path="/purchases" redirectTo={(d) => `/app/purchases/${(d as { id: string }).id}`} className="space-y-3">
+              <ApiForm path="/purchases" redirectTo="/app/purchases/:id" className="space-y-3">
                 <div><label className="label" htmlFor="pn">Product</label><input id="pn" name="productName" required className="field" /></div>
                 <div><label className="label" htmlFor="pm">Seller</label><input id="pm" name="merchant" className="field" /></div>
                 <div className="grid grid-cols-2 gap-2">

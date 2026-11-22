@@ -4,7 +4,7 @@
  * Returns the parsed parts *and* a plain-language interpretation so the UI can
  * show what will be saved before the user presses Enter.
  */
-import { type IsoDate, describeDate, partialToIso } from './calendar.ts';
+import { type IsoDate, addDays, addMonths, daysInMonth, describeDate, parseIso, partialToIso, toIso, weekday } from './calendar.ts';
 import { type DateOrder, type RecurrenceRule, type Uncertainty, describeRecurrence, findDates, findRecurrence } from './dates.ts';
 
 export interface QuickAdd {
@@ -69,14 +69,42 @@ export function parseQuickAdd(input: string, ctx: { today: IsoDate; order?: Date
     .trim();
   const cleanTitle = title ? title.charAt(0).toUpperCase() + title.slice(1) : input.trim();
 
+  // A repeat with no stated start ("every Monday", "on the 5th of every month")
+  // starts at its first occurrence on or after today — computed from the rule,
+  // not guessed — and the interpretation says so.
+  let derivedStart = false;
+  if (recurrence && !dueDate) {
+    dueDate = firstOccurrence(recurrence.rule, ctx.today);
+    derivedStart = true;
+  }
+
   const parts: string[] = [];
   if (dueDate) parts.push(describeDate(dueDate, ctx.locale));
   else if (d) parts.push(`${d.text} — year not stated`);
   if (dueTime) parts.push(`at ${dueTime}`);
-  if (recurrence) parts.push(describeRecurrence(recurrence.rule).toLowerCase());
+  if (recurrence) parts.push(describeRecurrence(recurrence.rule).toLowerCase() + (derivedStart ? ' (first one shown)' : ''));
   if (priority) parts.push(`priority ${priority}`);
   if (tags.length) parts.push(tags.map((t) => `#${t}`).join(' '));
   const interpretation = parts.length ? `“${cleanTitle}” · ${parts.join(' · ')}` : `“${cleanTitle}” · no date`;
 
   return { title: cleanTitle, dueDate, dueTime: dueDate ? dueTime : dueTime, recurrence: recurrence?.rule ?? null, priority, tags, interpretation, uncertain, matched };
+}
+
+/** First date on or after `today` that matches the rule. */
+export function firstOccurrence(rule: RecurrenceRule, today: IsoDate): IsoDate {
+  if (rule.freq === 'weekly' && rule.byWeekday?.length) {
+    for (let i = 0; i < 7; i++) {
+      const d = addDays(today, i);
+      if (rule.byWeekday.includes(weekday(d))) return d;
+    }
+  }
+  if (rule.freq === 'monthly' && rule.byMonthDay) {
+    const { y, m } = parseIso(today);
+    const thisMonth = toIso(y, m, Math.min(rule.byMonthDay, daysInMonth(y, m)));
+    if (thisMonth >= today) return thisMonth;
+    const next = addMonths(toIso(y, m, 1), 1);
+    const n = parseIso(next);
+    return toIso(n.y, n.m, Math.min(rule.byMonthDay, daysInMonth(n.y, n.m)));
+  }
+  return today;
 }

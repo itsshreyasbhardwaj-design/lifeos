@@ -51,7 +51,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
           </Section>
           {a.canEdit && (
             <Section title="Details">
-              <ApiForm path={`/documents/${id}`} method="PATCH" resetOnSuccess={false} success="Saved." className="grid gap-3 sm:grid-cols-2" transform={(b) => ({ ...b, isSensitive: Boolean(b.isSensitive) })}>
+              <ApiForm path={`/documents/${id}`} method="PATCH" resetOnSuccess={false} success="Saved." className="grid gap-3 sm:grid-cols-2">
                 <div className="sm:col-span-2"><label className="label" htmlFor="t">Title</label><input id="t" name="title" defaultValue={d.title} className="field" required /></div>
                 <div><label className="label" htmlFor="c">Category</label><select id="c" name="category" defaultValue={d.category} className="field">{DOCUMENT_CATEGORIES.map((c) => <option key={c} value={c}>{humanize(c)}</option>)}</select></div>
                 <div><label className="label" htmlFor="i">Issued by</label><input id="i" name="issuer" defaultValue={d.issuer ?? ''} className="field" /></div>
@@ -73,10 +73,7 @@ export default async function DocumentPage({ params }: { params: Promise<{ id: s
           {owner && (
             <Section title="Sharing">
               {families.length === 0 ? <p className="text-sm muted">Private. Create a family space to share selected documents.</p> : (
-                <ApiForm path={`/documents/${id}/share`} success="Shared." className="space-y-2" transform={(b) => {
-                  const [kind, target] = String(b.target).split(':');
-                  return { granteeUserId: kind === 'u' ? target : null, granteeWorkspaceId: kind === 'w' ? target : null, canDownload: Boolean(b.canDownload), expiresAt: b.expiresAt ? new Date(String(b.expiresAt)).toISOString() : null };
-                }}>
+                <ApiForm path={`/documents/${id}/share`} success="Shared." className="space-y-2" transform="shareTarget">
                   <label className="label" htmlFor="share-target">Share with</label>
                   <select id="share-target" name="target" className="field" required>
                     {families.map((f) => <option key={f.workspaceId} value={`w:${f.workspaceId}`}>Everyone in {f.name}</option>)}

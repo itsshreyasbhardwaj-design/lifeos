@@ -111,7 +111,7 @@ test('password hashing, file envelope encryption, TOTP', async () => {
   assert.ok(!blob.includes(Buffer.from('secret receipt')));
   assert.equal(decryptBlob(blob).toString(), 'secret receipt');
   const tampered = Buffer.from(blob);
-  tampered[tampered.length - 1] ^= 1;
+  tampered.writeUInt8(tampered.readUInt8(tampered.length - 1) ^ 1, tampered.length - 1);
   assert.throws(() => decryptBlob(tampered));
   // RFC 6238 test vector (SHA-1, T = 59s): 94287082 → last 6 digits 287082.
   assert.equal(totp('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ', 59_000), '287082');

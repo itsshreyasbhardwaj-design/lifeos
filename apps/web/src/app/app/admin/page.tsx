@@ -33,7 +33,7 @@ export default async function AdminPage() {
         </div>
         {allowed && (
           <Section title="Start a workflow">
-            <ApiForm path="/admin" redirectTo={(d) => `/app/admin/${(d as { id: string }).id}`} className="space-y-3">
+            <ApiForm path="/admin" redirectTo="/app/admin/:id" className="space-y-3">
               <div><label className="label" htmlFor="at">Template</label><select id="at" name="templateKey" className="field">{ADMIN_TEMPLATES.map((t) => <option key={t.key} value={t.key}>{t.name}</option>)}</select></div>
               <div><label className="label" htmlFor="an">Title</label><input id="an" name="title" required className="field" placeholder="e.g. Apply to IISc summer programme" /></div>
               <div><label className="label" htmlFor="ad">Deadline</label><input id="ad" name="deadline" type="date" className="field" /></div>

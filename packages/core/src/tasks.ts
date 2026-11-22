@@ -393,7 +393,10 @@ export async function listTasks(ctx: Ctx, query: TaskQuery = {}, q: Queryable = 
   if (query.workspaceIds?.length) add('t.workspace_id = ANY($?)', query.workspaceIds);
   if (query.listId) add('t.list_id = $?', query.listId);
   if (query.tag) add('$? = ANY(t.tags)', query.tag.toLowerCase());
-  if (query.search) add(`(t.title ILIKE $? OR t.notes ILIKE $${params.length + 1})`, `%${query.search}%`), params.push(`%${query.search}%`);
+  if (query.search) {
+    params.push(`%${query.search}%`);
+    where.push(`(t.title ILIKE $${params.length} OR t.notes ILIKE $${params.length})`);
+  }
   const order = query.sort === 'priority' ? 't.priority DESC, t.due_date NULLS LAST' : query.sort === 'created' ? 't.created_at DESC' : query.sort === 'title' ? 't.title' : view === 'completed' ? 't.completed_at DESC' : 't.due_date NULLS LAST, t.due_time NULLS LAST, t.priority DESC, t.created_at';
   params.push(Math.min(query.limit ?? 300, 1000));
   return q.query(

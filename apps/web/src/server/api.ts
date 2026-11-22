@@ -572,8 +572,11 @@ route('POST', '/cron/tick', async (r) => {
 
 function clientIp(req: Request): string | null {
   // Only trust forwarded headers when told to (behind a known proxy).
+  // Without a trusted proxy there is no reliable client address in a route
+  // handler; returning null skips IP-based limits rather than lumping every
+  // visitor into one bucket. Per-account limits still apply.
   if (process.env.LIFEOS_TRUST_PROXY === '1') return req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? null;
-  return req.headers.get('x-real-ip') ?? 'local';
+  return null;
 }
 
 function fileResponse(data: Buffer, mime: string, name: string, download: boolean): Response {
@@ -625,8 +628,24 @@ function sameOrigin(req: Request): boolean {
 
 const MAX_JSON = 1_000_000;
 
+/**
+ * The browser extension calls the API with a bearer token from its own
+ * origin. CORS is answered only for extension origins, and only without
+ * credentials, so cookies are never usable cross-origin.
+ */
+const EXTENSION_ORIGIN = /^(chrome|moz|safari-web)-extension:\/\/[a-z0-9-]+$/i;
+function corsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('origin') ?? '';
+  if (!EXTENSION_ORIGIN.test(origin)) return {};
+  return { 'access-control-allow-origin': origin, 'access-control-allow-methods': 'GET, POST', 'access-control-allow-headers': 'authorization, content-type', 'access-control-max-age': '600', vary: 'Origin' };
+}
+
 export async function dispatch(req: Request, path: string[]): Promise<Response> {
   const url = new URL(req.url);
+  if (req.method === 'OPTIONS') {
+    const h = corsHeaders(req);
+    return new Response(null, { status: Object.keys(h).length ? 204 : 403, headers: h });
+  }
   const p = `/${path.join('/')}`;
   const match = routes.find((r) => r.method === req.method && r.pattern.test(p));
   if (!match) {
@@ -691,9 +710,11 @@ export async function dispatch(req: Request, path: string[]): Promise<Response> 
     const result = await match.handler(r);
     const res = result instanceof Response ? result : Response.json({ data: result ?? null }, { headers: { 'cache-control': 'no-store' } });
     for (const c of setCookies) res.headers.append('set-cookie', c);
+    if (viaToken) for (const [k, v] of Object.entries(corsHeaders(req))) res.headers.set(k, v);
     return res;
   } catch (err) {
-    if (err instanceof AppError) return Response.json({ error: { code: err.code, message: err.message, details: err.details ?? null } }, { status: err.status, headers: err.code === 'rate_limited' ? { 'retry-after': String((err.details as { retryAfterSeconds: number }).retryAfterSeconds) } : {} });
+    const cors = req.headers.get('authorization') ? corsHeaders(req) : {};
+    if (err instanceof AppError) return Response.json({ error: { code: err.code, message: err.message, details: err.details ?? null } }, { status: err.status, headers: { ...cors, ...(err.code === 'rate_limited' ? { 'retry-after': String((err.details as { retryAfterSeconds: number }).retryAfterSeconds) } : {}) } });
     if (err instanceof z.ZodError) return Response.json({ error: { code: 'invalid', message: err.issues[0]?.message ?? 'Invalid input.', details: err.issues.map((i) => ({ path: i.path.join('.'), message: i.message })) } }, { status: 422 });
     console.error('[lifeos-api]', req.method, p, err);
     return Response.json({ error: { code: 'internal', message: 'Something went wrong. Try again, and check the record before repeating the action.' } }, { status: 500 });

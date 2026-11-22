@@ -41,7 +41,7 @@ export default async function AiPage() {
                 <li key={r.id} className="flex items-center justify-between gap-2"><span><span className="font-medium">{r.name}</span><span className="block text-xs muted">When {humanize(r.trigger).toLowerCase()} ({r.conditions.daysBefore ?? 7} days) → {humanize(r.action).toLowerCase()} · ran {r.run_count}{r.max_runs ? `/${r.max_runs}` : ''} times</span></span>
                   <ApiButton path={`/automations/${r.id}`} method="PATCH" body={{ enabled: !r.enabled }}>{r.enabled ? 'Turn off' : 'Turn on'}</ApiButton></li>
               ))}</ul>
-              <ApiForm path="/automations" className="space-y-2" transform={(b) => ({ name: b.name, trigger: b.trigger, action: b.action, conditions: { daysBefore: Number(b.daysBefore ?? 7) }, maxRuns: b.maxRuns ?? null })}>
+              <ApiForm path="/automations" className="space-y-2" transform="automation">
                 <p className="text-sm font-semibold">New automation</p>
                 <input name="name" required className="field" placeholder="Name" aria-label="Name" />
                 <div className="grid gap-2 sm:grid-cols-2">

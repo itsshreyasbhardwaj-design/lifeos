@@ -20,7 +20,7 @@ export function PageHeader({ title, description, actions, back }: { title: strin
 
 export function Section({ title, children, action, className = '' }: { title: string; children: ReactNode; action?: ReactNode; className?: string }) {
   return (
-    <section className={`card p-4 md:p-5 ${className}`} aria-label={title}>
+    <section className={`card min-w-0 p-4 md:p-5 ${className}`} aria-label={title}>
       <div className="mb-3 flex items-center justify-between gap-2">
         <h2 className="h2">{title}</h2>
         {action}

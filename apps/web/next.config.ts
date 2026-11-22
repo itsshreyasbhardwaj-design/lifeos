@@ -39,6 +39,8 @@ const csp = [
 
 const config: NextConfig = {
   reactStrictMode: true,
+  // E2E builds use their own directory so a running dev server cannot clobber them.
+  distDir: process.env.NEXT_DIST_DIR ?? '.next',
   poweredByHeader: false,
   // Workspace packages ship TypeScript source with .ts specifiers.
   transpilePackages: ['@lifeos/core', '@lifeos/extract'],
