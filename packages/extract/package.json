@@ -1,0 +1,9 @@
+{
+  "name": "@lifeos/extract",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, dependency-free extraction of dates, amounts, entities and action candidates from text.",
+  "exports": { ".": "./src/index.ts" },
+  "license": "AGPL-3.0-only"
+}

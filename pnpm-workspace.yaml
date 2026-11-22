@@ -1,0 +1,21 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+  - 'workers/*'
+
+# pnpm refuses to run dependency build scripts unless they are reviewed here.
+#   @tailwindcss/oxide — Tailwind v4's native CSS engine (prebuilt binary)
+#   sharp              — Next.js image optimisation
+#   tesseract.js       — denied: its postinstall only prints a funding notice
+# `allowBuilds` is the pnpm 11 key; `onlyBuiltDependencies` keeps pnpm 10 working.
+allowBuilds:
+  '@tailwindcss/oxide': true
+  sharp: true
+  tesseract.js: false
+
+onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
+  - sharp
+
+autoInstallPeers: true
+strictPeerDependencies: false

@@ -1,0 +1,11 @@
+{
+  "name": "@lifeos/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Durable background worker: reminder delivery, extraction jobs, automation evaluation.",
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@lifeos/core": "workspace:*"
+  }
+}

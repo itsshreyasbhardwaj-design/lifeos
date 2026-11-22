@@ -1,0 +1,17 @@
+node_modules/
+.next/
+out/
+dist/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+.env
+.env.local
+.env.*.local
+# Local data: database, uploaded files, OCR models, generated keys
+data/
+!tests/fixtures/**
+test-results/
+playwright-report/
+.DS_Store
+apps/extension/dist/

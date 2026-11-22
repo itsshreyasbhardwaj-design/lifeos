@@ -1,0 +1,32 @@
+{
+  "name": "lifeos",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "LifeOS — never forget what matters. Capture anything important, confirm what it means, get reminded, get it done.",
+  "license": "AGPL-3.0-only",
+  "packageManager": "pnpm@11.17.0",
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @lifeos/web dev",
+    "build": "pnpm --filter @lifeos/web build",
+    "start": "pnpm --filter @lifeos/web start",
+    "worker": "node workers/background/src/index.ts",
+    "test": "node --test --test-concurrency=4 \"packages/*/test/**/*.test.ts\"",
+    "test:e2e": "pnpm --filter @lifeos/web e2e",
+    "typecheck": "tsc -p tsconfig.json --noEmit && pnpm --filter @lifeos/web typecheck",
+    "lint": "oxlint packages workers apps/web/src apps/extension tests scripts",
+    "db:migrate": "node scripts/migrate.ts",
+    "seed:demo": "node scripts/seed-demo.ts",
+    "setup:ocr": "node scripts/setup-ocr.ts",
+    "bench": "node scripts/bench.ts",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test && pnpm build"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "oxlint": "^1.89.0",
+    "typescript": "^5.9.3"
+  }
+}
